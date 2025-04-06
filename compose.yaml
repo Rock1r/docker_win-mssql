@@ -1,0 +1,45 @@
+services:
+  windows:
+    image: dockurr/windows
+    container_name: windows
+    environment:
+      VERSION: "10"
+      DISK_SIZE: "100G"
+      RAM_SIZE: "8G"
+      CPU_CORES: 3
+    devices:
+      - /dev/kvm
+      - /dev/net/tun
+    cap_add:
+      - NET_ADMIN
+    networks:
+      net:
+        ipv4_address: 172.18.0.2
+    ports:
+      - 8006:8006
+      - 3389:3389/tcp
+      - 3389:3389/udp
+    stop_grace_period: 2m
+    volumes:
+      - ./windows:/storage
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "${MSSQL_PASS}"
+    networks:
+      net:
+        ipv4_address: 172.18.0.3
+    ports:
+      - 1433:1433
+    stop_grace_period: 2m
+    volumes:
+      - ./mssql:/etc/data
+networks:
+  net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.0.0/16
