@@ -4,7 +4,7 @@ services:
     container_name: windows
     environment:
       VERSION: "10"
-      DISK_SIZE: "100G"
+      DISK_SIZE: "200G"
       RAM_SIZE: "8G"
       CPU_CORES: 3
     devices:
@@ -25,6 +25,7 @@ services:
   mssql:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: mssql
+    user: root
     environment:
       ACCEPT_EULA: "Y"
       MSSQL_SA_PASSWORD: "${MSSQL_PASS}"
@@ -35,7 +36,7 @@ services:
       - 1433:1433
     stop_grace_period: 2m
     volumes:
-      - ./mssql:/etc/data
+      - ./mssql:/var/opt/mssql
 networks:
   net:
     driver: bridge
